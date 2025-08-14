@@ -3,21 +3,22 @@ name: Update leaderboard hourly
 on:
   schedule:
     - cron: '0 * * * *'   # каждый час (UTC)
-  workflow_dispatch:       # запуск вручную из вкладки Actions
+  workflow_dispatch:
 
 permissions:
-  contents: write          # нужен доступ на коммит/пуш
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:                         # <-- делаем доступным везде
+      USE_SSH: ${{ secrets.USE_SSH }}
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # (опционально) если используешь кастомный домен — держим файл CNAME
-      # Создай Repo Variable (Settings → Variables) с именем CUSTOM_DOMAIN и значением своего домена.
+      # (опционально) держим CNAME из Repo Variables (Settings → Variables → CUSTOM_DOMAIN)
       - name: Ensure CNAME (optional)
         if: ${{ vars.CUSTOM_DOMAIN != '' }}
         run: echo "${{ vars.CUSTOM_DOMAIN }}" > CNAME
@@ -32,9 +33,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install psycopg2-binary
 
-      # --- SSH-туннель — запускаем ТОЛЬКО если USE_SSH=true ---
+      # ------- SSH tunnel only if USE_SSH == 'true' -------
       - name: Start SSH tunnel (if needed)
-        if: ${{ secrets.USE_SSH == 'true' }}
+        if: ${{ env.USE_SSH == 'true' }}   # <-- проверяем env, не secrets
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -45,24 +46,20 @@ jobs:
         run: |
           echo "$SSH_KEY" > id_rsa
           chmod 600 id_rsa
-          # Пробрасываем локальный порт 5433 на внутренний адрес БД через бастион
           nohup ssh -o StrictHostKeyChecking=no -i id_rsa -N \
             -L 5433:${DB_INTERNAL_HOST}:${DB_INTERNAL_PORT} \
             ${SSH_USER}@${SSH_HOST} -p ${SSH_PORT} &
-          # даём туннелю подняться
           sleep 4
 
       - name: Run export.py
         env:
-          # Значения для прямого подключения (если USE_SSH != true)
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASS: ${{ secrets.DB_PASS }}
-          USE_SSH: ${{ secrets.USE_SSH }}
+          USE_SSH: ${{ env.USE_SSH }}   # прокидываем флаг в шаг
         run: |
-          # Если задействован SSH-туннель — подключаемся к нему
           if [ "${USE_SSH}" = "true" ]; then
             export DB_HOST=127.0.0.1
             export DB_PORT=5433
