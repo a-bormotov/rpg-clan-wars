@@ -1,87 +1,87 @@
 kind,clan,clan_rank,clan_result_total,userId,player_rank,player_result,order_in_group
-clan,34646,1,0,,,,0
-clan,ABOBUS,1,0,,,,0
-clan,AlyaOlio,1,0,,,,0
-clan,Alexio,1,0,,,,0
-clan,1PERCENT,1,0,,,,0
-clan,AD Nappers,1,0,,,,0
-clan,AkoyMagsasaka,1,0,,,,0
-clan,AG.GOTCHI,1,0,,,,0
-clan,AAA+,1,0,,,,0
-clan,Airdrop Finder,1,0,,,,0
-clan,Agraraman,1,0,,,,0
-clan,Akashic Records,1,0,,,,0
-clan,30 засланцев,1,0,,,,0
-clan,3pidemic,1,0,,,,0
-clan,#unknown,1,0,,,,0
-clan,ANDEEZY,1,0,,,,0
-clan,Alya,1,0,,,,0
-player,AAA+,1,0,853,1,0,1
-player,34646,1,0,34344,1,0,1
-player,ABOBUS,1,0,34473,1,0,1
-player,30 засланцев,1,0,34922,1,0,1
-player,1PERCENT,1,0,35243,1,0,1
-player,3pidemic,1,0,35583,1,0,1
-player,AD Nappers,1,0,37045,1,0,1
-player,#unknown,1,0,40631,1,0,1
-player,AG.GOTCHI,1,0,41211,1,0,1
-player,ANDEEZY,1,0,44421,1,0,1
-player,AkoyMagsasaka,1,0,47451,1,0,1
-player,Akashic Records,1,0,48943,1,0,1
-player,Alya,1,0,50801,1,0,1
-player,Airdrop Finder,1,0,76400,1,0,1
-player,AlyaOlio,1,0,114061,1,0,1
-player,Alexio,1,0,119500,1,0,1
-player,Agraraman,1,0,165529,1,0,1
-player,ABOBUS,1,0,34551,2,0,1
-player,34646,1,0,34646,2,0,1
-player,30 засланцев,1,0,34980,2,0,1
-player,AD Nappers,1,0,37709,2,0,1
-player,1PERCENT,1,0,39167,2,0,1
-player,AG.GOTCHI,1,0,41448,2,0,1
-player,AkoyMagsasaka,1,0,49548,2,0,1
-player,AAA+,1,0,87735,2,0,1
-player,AlyaOlio,1,0,114672,2,0,1
-player,Akashic Records,1,0,130524,2,0,1
-player,ABOBUS,1,0,34605,3,0,1
-player,34646,1,0,34796,3,0,1
-player,30 засланцев,1,0,35193,3,0,1
-player,AG.GOTCHI,1,0,42499,3,0,1
-player,1PERCENT,1,0,45399,3,0,1
-player,AkoyMagsasaka,1,0,69884,3,0,1
-player,AAA+,1,0,88138,3,0,1
-player,AlyaOlio,1,0,117950,3,0,1
-player,AD Nappers,1,0,148292,3,0,1
-player,ABOBUS,1,0,34719,4,0,1
-player,34646,1,0,34845,4,0,1
-player,30 засланцев,1,0,35380,4,0,1
-player,1PERCENT,1,0,45974,4,0,1
-player,AG.GOTCHI,1,0,59885,4,0,1
-player,AkoyMagsasaka,1,0,101032,4,0,1
-player,AlyaOlio,1,0,127142,4,0,1
-player,ABOBUS,1,0,34748,5,0,1
-player,34646,1,0,35508,5,0,1
-player,30 засланцев,1,0,37978,5,0,1
-player,1PERCENT,1,0,46181,5,0,1
-player,AG.GOTCHI,1,0,66494,5,0,1
-player,ABOBUS,1,0,34936,6,0,1
-player,34646,1,0,38610,6,0,1
-player,30 засланцев,1,0,38664,6,0,1
-player,1PERCENT,1,0,46431,6,0,1
-player,AG.GOTCHI,1,0,68042,6,0,1
-player,ABOBUS,1,0,35385,7,0,1
-player,1PERCENT,1,0,48610,7,0,1
-player,34646,1,0,55411,7,0,1
-player,30 засланцев,1,0,71673,7,0,1
-player,AG.GOTCHI,1,0,76014,7,0,1
-player,ABOBUS,1,0,37666,8,0,1
-player,1PERCENT,1,0,50937,8,0,1
-player,34646,1,0,74013,8,0,1
-player,AG.GOTCHI,1,0,94982,8,0,1
-player,ABOBUS,1,0,38302,9,0,1
-player,1PERCENT,1,0,56497,9,0,1
-player,34646,1,0,86418,9,0,1
-player,AG.GOTCHI,1,0,156190,9,0,1
-player,ABOBUS,1,0,40350,10,0,1
-player,1PERCENT,1,0,81996,10,0,1
-player,34646,1,0,115642,10,0,1
+clan,34646,1,22333,,,,0
+player,34646,1,22333,34796,1,13060,1
+player,34646,1,22333,35508,2,9273,1
+player,34646,1,22333,34344,3,0,1
+player,34646,1,22333,34646,4,0,1
+player,34646,1,22333,34845,5,0,1
+player,34646,1,22333,38610,6,0,1
+player,34646,1,22333,55411,7,0,1
+player,34646,1,22333,74013,8,0,1
+player,34646,1,22333,86418,9,0,1
+player,34646,1,22333,115642,10,0,1
+clan,#unknown,2,4065,,,,0
+player,#unknown,2,4065,40631,1,4065,1
+clan,Alya,3,2926,,,,0
+player,Alya,3,2926,50801,1,2926,1
+clan,30 засланцев,4,0,,,,0
+clan,Alexio,4,0,,,,0
+clan,1PERCENT,4,0,,,,0
+clan,AD Nappers,4,0,,,,0
+clan,AkoyMagsasaka,4,0,,,,0
+clan,AG.GOTCHI,4,0,,,,0
+clan,AAA+,4,0,,,,0
+clan,Airdrop Finder,4,0,,,,0
+clan,Agraraman,4,0,,,,0
+clan,Akashic Records,4,0,,,,0
+clan,3pidemic,4,0,,,,0
+clan,AlyaOlio,4,0,,,,0
+clan,ANDEEZY,4,0,,,,0
+clan,ABOBUS,4,0,,,,0
+player,AAA+,4,0,853,1,0,1
+player,ABOBUS,4,0,34473,1,0,1
+player,30 засланцев,4,0,34922,1,0,1
+player,1PERCENT,4,0,35243,1,0,1
+player,3pidemic,4,0,35583,1,0,1
+player,AD Nappers,4,0,37045,1,0,1
+player,AG.GOTCHI,4,0,41211,1,0,1
+player,ANDEEZY,4,0,44421,1,0,1
+player,AkoyMagsasaka,4,0,47451,1,0,1
+player,Akashic Records,4,0,48943,1,0,1
+player,Airdrop Finder,4,0,76400,1,0,1
+player,AlyaOlio,4,0,114061,1,0,1
+player,Alexio,4,0,119500,1,0,1
+player,Agraraman,4,0,165529,1,0,1
+player,ABOBUS,4,0,34551,2,0,1
+player,30 засланцев,4,0,34980,2,0,1
+player,AD Nappers,4,0,37709,2,0,1
+player,1PERCENT,4,0,39167,2,0,1
+player,AG.GOTCHI,4,0,41448,2,0,1
+player,AkoyMagsasaka,4,0,49548,2,0,1
+player,AAA+,4,0,87735,2,0,1
+player,AlyaOlio,4,0,114672,2,0,1
+player,Akashic Records,4,0,130524,2,0,1
+player,ABOBUS,4,0,34605,3,0,1
+player,30 засланцев,4,0,35193,3,0,1
+player,AG.GOTCHI,4,0,42499,3,0,1
+player,1PERCENT,4,0,45399,3,0,1
+player,AkoyMagsasaka,4,0,69884,3,0,1
+player,AAA+,4,0,88138,3,0,1
+player,AlyaOlio,4,0,117950,3,0,1
+player,AD Nappers,4,0,148292,3,0,1
+player,ABOBUS,4,0,34719,4,0,1
+player,30 засланцев,4,0,35380,4,0,1
+player,1PERCENT,4,0,45974,4,0,1
+player,AG.GOTCHI,4,0,59885,4,0,1
+player,AkoyMagsasaka,4,0,101032,4,0,1
+player,AlyaOlio,4,0,127142,4,0,1
+player,ABOBUS,4,0,34748,5,0,1
+player,30 засланцев,4,0,37978,5,0,1
+player,1PERCENT,4,0,46181,5,0,1
+player,AG.GOTCHI,4,0,66494,5,0,1
+player,ABOBUS,4,0,34936,6,0,1
+player,30 засланцев,4,0,38664,6,0,1
+player,1PERCENT,4,0,46431,6,0,1
+player,AG.GOTCHI,4,0,68042,6,0,1
+player,ABOBUS,4,0,35385,7,0,1
+player,1PERCENT,4,0,48610,7,0,1
+player,30 засланцев,4,0,71673,7,0,1
+player,AG.GOTCHI,4,0,76014,7,0,1
+player,ABOBUS,4,0,37666,8,0,1
+player,1PERCENT,4,0,50937,8,0,1
+player,AG.GOTCHI,4,0,94982,8,0,1
+player,ABOBUS,4,0,38302,9,0,1
+player,1PERCENT,4,0,56497,9,0,1
+player,AG.GOTCHI,4,0,156190,9,0,1
+player,ABOBUS,4,0,40350,10,0,1
+player,1PERCENT,4,0,81996,10,0,1
