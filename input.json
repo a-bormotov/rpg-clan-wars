@@ -1,0 +1,9 @@
+[
+  { "userId": 35430, "subtract": 180, "clan": "Wolves" },
+  { "userId": 34478, "subtract": 160, "clan": "Wolves" },
+  { "userId": 35124, "subtract": 160, "clan": "Foxes" },
+  { "userId": 58157, "subtract": 160, "clan": "Foxes" },
+  { "userId": 34578, "subtract": 160, "clan": "Wolves" },
+  { "userId": 36776, "subtract": 140, "clan": "Owls"   },
+  { "userId": 37062, "subtract": 140, "clan": "Owls"   }
+]
