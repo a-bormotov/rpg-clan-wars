@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8" />
+<title>Leaderboard</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body{font:14px/1.5 system-ui, sans-serif;margin:24px;max-width:1100px}
+  table{border-collapse:collapse;width:100%}
+  th,td{border:1px solid #ddd;padding:8px;text-align:left;white-space:nowrap}
+  thead th{position:sticky;top:0;background:#fafafa}
+  .muted{color:#666;font-size:12px;margin:8px 0 20px}
+</style>
+<h1>Leaderboard</h1>
+<p class="muted">Обновляется автоматически каждый час.</p>
+<table id="tbl"><thead></thead><tbody></tbody></table>
+<script>
+async function load() {
+  const res = await fetch('leaderboard.csv?cache=' + Date.now());
+  if (!res.ok) { document.body.insertAdjacentHTML('beforeend', '<p>Не удалось загрузить CSV.</p>'); return; }
+  const text = await res.text();
+  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
+  const [headers, ...data] = rows;
+  const thead = document.querySelector('#tbl thead');
+  const tbody = document.querySelector('#tbl tbody');
+  thead.innerHTML = '<tr>' + headers.map(h=>`<th>${h}</th>`).join('') + '</tr>';
+  tbody.innerHTML = data.map(cells => '<tr>' + cells.map(c=>`<td>${c}</td>`).join('') + '</tr>').join('');
+}
+load();
+</script>
+</html>
