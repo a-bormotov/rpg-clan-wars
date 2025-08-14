@@ -1,132 +1,283 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Clan Wars Leaderboard</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sleepagotchi — Clan Wars Leaderboard</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #0b0f1a;
-        color: #fff;
-        margin: 0;
-        padding: 0;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-    th, td {
-        padding: 8px 12px;
-        text-align: center;
-    }
-    th {
-        background-color: #1f2937;
-    }
-    details.card > summary {
-        list-style: none;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        cursor: pointer;
-        user-select: none;
-        background: linear-gradient(90deg, rgba(123,63,242,0.6), rgba(167,139,250,0.6));
-        font-weight: 800;
-        letter-spacing: .2px;
-    }
-    .clan-name {
-        color: #ffa500; /* оранжевый */
-        font-size: 1.2em;
-        font-weight: 900;
-    }
-    .timestamp {
-        font-size: 0.9em;
-        color: #ccc;
-        margin: 10px 0;
-        text-align: center;
-    }
+  :root{
+    --bg:#0b1220;
+    --fg:#e6f1ff;
+    --muted:#9fb1c6;
+    --card:#111a2b;
+    --card-2:#0e1726;
+    --border:#223045;
+    --header:#7b3ff2;
+    --header-2:#a78bfa;
+    --accent:#20e39c;
+    --accent-2:#19c07f;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 520px at 20% -10%, rgba(123,63,242,.14), transparent 70%),
+      radial-gradient(900px 480px at 120% 10%, rgba(32,227,156,.10), transparent 70%),
+      linear-gradient(#0b1220, var(--bg));
+    color:var(--fg);
+    font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  }
+  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+
+  /* Header */
+  .hero{
+    background:linear-gradient(180deg, rgba(123,63,242,.18), rgba(123,63,242,.06));
+    border:1px solid rgba(167,139,250,.25);
+    border-radius:14px;
+    padding:18px 16px;
+    margin-bottom:16px;
+  }
+  .hero h1{margin:0 0 6px 0;font-size:24px;letter-spacing:.2px}
+  .muted{color:var(--muted)}
+
+  /* Controls */
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap; margin:14px 0}
+  input[type="search"], select{
+    padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);
+    border-radius:10px;outline:none
+  }
+
+  /* Clan cards */
+  .card{
+    background:linear-gradient(180deg, rgba(17,26,43,.9), rgba(14,23,38,.9));
+    backdrop-filter:blur(6px);
+    border:1px solid var(--border);
+    border-radius:14px;
+    overflow:hidden;
+    margin:10px 0;
+  }
+  /* ЯРКИЙ заголовок клана */
+  details.card > summary{
+    list-style:none;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:12px 16px; cursor:pointer; user-select:none;
+	background:linear-gradient(90deg, rgba(123,63,242,0.6), rgba(167,139,250,0.6));
+    color:#0b0f1a;
+    font-weight:800;
+    letter-spacing:.2px;
+  }
+  details.card[open] > summary{
+    border-bottom:1px solid var(--border);
+    box-shadow:inset 0 -1px 0 rgba(0,0,0,.25);
+  }
+  summary::-webkit-details-marker{display:none}
+  .clan-title{display:flex;gap:10px;align-items:center}
+  .rank{
+    display:inline-block;min-width:40px;text-align:center;font-weight:800;
+    background:rgba(255,255,255,.25);
+    border:1px solid rgba(255,255,255,.35);
+    padding:2px 8px;border-radius:10px
+  }
+  .badge{
+    font-size:12px;padding:2px 8px;border:1px solid rgba(0,0,0,.25);
+    border-radius:999px;color:#0b0f1a;background:rgba(255,255,255,.25);font-weight:700
+  }
+  .total{opacity:.95}
+  .total strong{color:#0b0f1a}
+
+  /* Table */
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  thead th{position:sticky;top:0;background:var(--card-2)}
+  tbody tr:hover td{background:rgba(255,255,255,.03)}
+  .right{text-align:right}
+  .center{text-align:center}
+
+  /* Panels / footer */
+  .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
+  .spacer{flex:1}
+  .chip{border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--muted)}
+
+  /* Pager buttons */
+  .btn{
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    border:none;color:#012016;font-weight:600;
+    padding:10px 12px;border-radius:10px;cursor:pointer
+  }
 </style>
 </head>
 <body>
+<div class="wrap">
+  <div class="hero">
+    <h1>Clan Wars — Leaderboard</h1>
+    <div class="muted" id="last">Updated —</div>
+  </div>
 
-<div class="timestamp" id="timestamp"></div>
-<div id="leaderboard"></div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="Search clans & players…" />
+    <select id="pagesize" title="Clans per page">
+      <option>10</option><option selected>20</option><option>50</option>
+    </select>
+  </div>
+
+  <div class="panel">
+    <span class="chip" id="meta">—</span>
+    <div class="spacer"></div>
+    <span class="muted">Tip: click a clan row to expand its players</span>
+  </div>
+
+  <!-- clans render here -->
+  <div id="clans"></div>
+
+  <div class="panel">
+    <div class="spacer"></div>
+    <button id="prev" class="btn">← Previous</button>
+    <span class="chip" id="pageinfo">1 / 1</span>
+    <button id="next" class="btn">Next →</button>
+  </div>
+</div>
 
 <script>
-async function loadData() {
-    const response = await fetch('leaderboard.csv');
-    const csvText = await response.text();
-    const rows = csvText.trim().split('\n').map(r => r.split(','));
-    const headers = rows.shift();
-    const data = rows.map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
+let orderedClans = [];
+let page = 1, pageSize = 20;
+const rootEl = document.getElementById('clans');
+const metaEl = document.getElementById('meta');
+const pageInfo = document.getElementById('pageinfo');
+const lastEl = document.getElementById('last');
 
-    const clans = {};
-    data.forEach(row => {
-        if (row.kind === 'clan') {
-            clans[row.clan] = { rank: row.clan_rank, total: row.clan_result_total, players: [] };
-        } else if (row.kind === 'player') {
-            clans[row.clan].players.push({
-                name: row.userId,
-                rank: row.player_rank,
-                result: row.player_result
-            });
-        }
-    });
+function formatNumber(x){
+  const n = Number(x);
+  if (Number.isNaN(n)) return x;
+  return n.toLocaleString('en-US');
+}
 
-    const container = document.getElementById('leaderboard');
-    container.innerHTML = '';
-    Object.entries(clans).sort((a,b) => a[1].rank - b[1].rank).forEach(([clan, data]) => {
-        const details = document.createElement('details');
-        details.classList.add('card');
-        const summary = document.createElement('summary');
-        summary.innerHTML = `
-            <div class="clan-name">#${data.rank} ${clan}</div>
-            <div>Clan Total vSleep: ${data.total}</div>
-        `;
-        details.appendChild(summary);
+function formatTimeAgo(date){
+  const diffMs = Date.now() - date.getTime();
+  const mins = Math.floor(diffMs / 60000);
+  const hours = Math.floor(mins / 60);
+  if (mins < 1) return 'Updated just now';
+  if (mins < 60) return `Updated ${mins} minute${mins===1?'':'s'} ago`;
+  if (hours === 1) return 'Updated 1 hour ago';
+  return `Updated ${hours} hours ago`;
+}
 
-        const table = document.createElement('table');
-        table.innerHTML = `
+function setLastUpdated(headers){
+  const lm = headers.get('last-modified');
+  if (!lm) { lastEl.textContent = 'Updated just now'; return; }
+  const dt = new Date(lm);
+  lastEl.textContent = formatTimeAgo(dt);
+}
+
+async function loadCSV(){
+  const res = await fetch('leaderboard.csv?cache=' + Date.now());
+  if(!res.ok){
+    rootEl.innerHTML = '<div class="card" style="padding:16px">Failed to load CSV</div>';
+    return;
+  }
+  setLastUpdated(res.headers);
+  const txt = await res.text();
+
+  // simple CSV parsing (no embedded commas/quotes expected)
+  const lines = txt.trim().split(/\r?\n/).map(r => r.split(','));
+  const headers = lines.shift().map(h => h.replace(/^"|"$/g,''));
+  const idx = Object.fromEntries(headers.map((h,i)=>[h,i]));
+  // expected columns: kind, clan, clan_rank, clan_result_total, userId, player_rank, player_result, order_in_group
+
+  const map = new Map();
+  for (const row of lines) {
+    const kind = row[idx.kind];
+    const clan = row[idx.clan];
+    const clan_rank = +row[idx.clan_rank];
+    const clan_total = +row[idx.clan_result_total];
+
+    if (!map.has(clan)) map.set(clan, { rank: clan_rank, total: clan_total, players: [] });
+
+    if (kind === 'player') {
+      map.get(clan).players.push({
+        userId: row[idx.userId],                      // holds Player Name in our CSV
+        player_rank: +row[idx.player_rank],
+        player_result: +row[idx.player_result]
+      });
+    }
+  }
+
+  orderedClans = [...map.entries()].sort((a,b)=>a[1].rank - b[1].rank);
+  page = 1;
+  render();
+}
+
+function filteredClans(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  if(!q) return orderedClans;
+  return orderedClans.filter(([clan, data])=>{
+    if (clan.toLowerCase().includes(q)) return true;
+    return data.players.some(p =>
+      (''+p.userId).toLowerCase().includes(q) ||
+      (''+p.player_result).toLowerCase().includes(q) ||
+      (''+p.player_rank).toLowerCase().includes(q)
+    );
+  });
+}
+
+function render(){
+  const all = filteredClans();
+  pageSize = +document.getElementById('pagesize').value;
+  const maxPage = Math.max(1, Math.ceil(all.length / pageSize));
+  page = Math.min(page, maxPage);
+
+  const slice = all.slice((page-1)*pageSize, (page-1)*pageSize + pageSize);
+
+  rootEl.innerHTML = slice.map(([clan, data])=>{
+    const playersRows = (data.players || [])
+      .sort((a,b)=>a.player_rank - b.player_rank)
+      .map(p => `
+        <tr>
+          <td class="right" style="width:60px">#${p.player_rank}</td>
+          <td class="center">${p.userId}</td>
+          <td class="right">${formatNumber(p.player_result)}</td>
+        </tr>
+      `).join('') || `<tr><td colspan="3" class="center muted">No players</td></tr>`;
+
+    return `
+      <details class="card" ${data.rank===1 ? 'open' : ''}>
+        <summary>
+          <div class="clan-title">
+            <span class="rank">#${data.rank}</span>
+            <div>
+              <div style="font-weight:900">${clan}</div>
+              <div class="badge">players: ${data.players.length}</div>
+            </div>
+          </div>
+          <div class="total">Clan Total vSleep: <strong>${formatNumber(data.total)}</strong></div>
+        </summary>
+        <div style="padding:10px 16px 14px">
+          <table>
             <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Player Name</th>
-                    <th>vSleep</th>
-                </tr>
+              <tr>
+                <th class="right">Rank</th>
+                <th class="center">Player Name</th>
+                <th class="right">vSleep</th>
+              </tr>
             </thead>
-            <tbody>
-                ${data.players.map(p => `
-                    <tr>
-                        <td>${p.rank}</td>
-                        <td>${p.name}</td>
-                        <td>${p.result}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        `;
-        details.appendChild(table);
-        container.appendChild(details);
-    });
+            <tbody>${playersRows}</tbody>
+          </table>
+        </div>
+      </details>
+    `;
+  }).join('');
+
+  pageInfo.textContent = `${page} / ${Math.max(1, Math.ceil(all.length / pageSize))}`;
+  metaEl.textContent = `Clans: ${all.length} • Showing: ${slice.length}`;
 }
 
-function updateTimestamp() {
-    fetch('leaderboard.csv', { method: 'HEAD' })
-        .then(res => {
-            const lastModified = res.headers.get('Last-Modified');
-            if (lastModified) {
-                const lastDate = new Date(lastModified);
-                const diffMs = Date.now() - lastDate.getTime();
-                const diffMins = Math.floor(diffMs / 60000);
-                document.getElementById('timestamp').textContent = `Updated ${diffMins} minutes ago`;
-            }
-        });
-}
+document.getElementById('q').addEventListener('input', ()=>{ page=1; render(); });
+document.getElementById('pagesize').addEventListener('change', ()=>{ page=1; render(); });
+document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; render(); } };
+document.getElementById('next').onclick = ()=>{ const all = filteredClans(); const max = Math.max(1, Math.ceil(all.length/pageSize)); if(page<max){ page++; render(); } };
 
-loadData();
-updateTimestamp();
+setInterval(loadCSV, 5*60*1000);
+loadCSV();
 </script>
-
 </body>
 </html>
