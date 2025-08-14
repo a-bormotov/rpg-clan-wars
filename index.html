@@ -1,201 +1,241 @@
 <!doctype html>
 <html lang="ru">
+<head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Sleepagotchi — Clan Wars Leaderboard</title>
-
 <style>
-  /* ==== ПАЛИТРА: подгони под gocollect.sleepagotchi.com ==== */
+  /* ===== Палитра (подправь при желании под текущий бренд) ===== */
   :root{
     --bg: #0a0f14;          /* фон страницы */
     --fg: #eaf2ff;          /* основной текст */
     --muted:#9fb1c6;        /* вторичный текст */
-    --card:#0f1720;         /* карточки/ячейки */
+    --card:#101826;         /* карточки/ячейки */
     --border:#1d2a3a;       /* границы */
-    --primary:#00e6a8;      /* основной акцент (неоновый мятный) */
-    --secondary:#6c5ce7;    /* второй акцент (индиго/фиолет) */
-    --grad1:#0b1220;        /* градиент 1 */
-    --grad2:#101a2b;        /* градиент 2 */
+    --primary:#00e6a8;      /* акцент */
+    --secondary:#6c5ce7;    /* акцент 2 */
   }
-  /* светлая тема при желании */
   :root.light{
     --bg:#ffffff; --fg:#0a0f14; --muted:#5a6a7c; --card:#f5f8fc; --border:#e4ecf5;
-    --grad1:#ffffff; --grad2:#f7fbff;
   }
 
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0; background: radial-gradient(1200px 600px at 20% -10%, var(--grad2), transparent 70%) , linear-gradient(var(--grad1), var(--bg));
-    color:var(--fg); font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    margin:0; background:
+      radial-gradient(1200px 600px at 20% -10%, rgba(108,92,231,.12), transparent 70%),
+      linear-gradient(#0b1220, var(--bg));
+    color:var(--fg);
+    font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   }
-  .wrap{max-width:1200px; margin:32px auto; padding:0 16px}
-  header{display:flex; gap:16px; align-items:center; justify-content:space-between; margin-bottom:16px}
-  .title{display:flex; gap:12px; align-items:center}
-  .badge{font-size:12px; padding:4px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
-  h1{font-size:22px; margin:0}
+  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:16px}
+  h1{font-size:22px;margin:0}
   .muted{color:var(--muted)}
-  .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   input[type="search"], select, button{
-    padding:10px 12px; border:1px solid var(--border); background:var(--card); color:var(--fg);
-    border-radius:10px; outline:none
+    padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);
+    border-radius:10px;outline:none
   }
   button{cursor:pointer}
-  .pill{background:linear-gradient(135deg, var(--primary), var(--secondary)); color:#001a12; font-weight:600; border:none}
-  .cards{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin:16px 0}
-  .card{background:rgba(15,23,32,.7); backdrop-filter: blur(6px); border:1px solid var(--border); border-radius:16px; padding:14px}
-  .k{font-size:12px; color:var(--muted)}
-  .v{font-size:22px; font-weight:700}
-  .accent{background:linear-gradient(135deg, rgba(0,230,168,.15), rgba(108,92,231,.15)); border-color:rgba(0,230,168,.35)}
+  .pill{background:linear-gradient(135deg, var(--primary), var(--secondary));border:none;color:#001a12;font-weight:600}
 
-  table{width:100%; border-collapse:collapse}
-  thead th{position:sticky; top:0; background:var(--card); border-bottom:1px solid var(--border)}
-  th,td{padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap}
-  th.sortable{cursor:pointer}
+  .card{background:rgba(16,24,38,.8);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:14px}
+  details.card{margin:10px 0;overflow:hidden}
+  details.card > summary{
+    list-style:none; /* убираем маркер */
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding:12px 16px; cursor:pointer; user-select:none;
+  }
+  details.card[open] > summary{border-bottom:1px solid var(--border)}
+  summary::-webkit-details-marker{display:none}
+  .clan-title{display:flex;gap:10px;align-items:center}
+  .rank{display:inline-block;min-width:40px;text-align:center;font-weight:700}
+  .badge{font-size:12px;padding:2px 8px;border:1px solid var(--border);border-radius:999px;color:var(--muted)}
+  .total{opacity:.9}
+
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  thead th{position:sticky;top:0;background:var(--card)}
   tbody tr:hover td{background:rgba(255,255,255,.03)}
   .right{text-align:right}
   .center{text-align:center}
 
-  .panel{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:14px 0}
+  .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
   .spacer{flex:1}
-  .pager{display:flex; gap:8px; align-items:center}
-  .chip{border:1px solid var(--border); border-radius:8px; padding:6px 10px; color:var(--muted)}
-  .foot{margin-top:18px; color:var(--muted); font-size:12px}
+  .chip{border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--muted)}
+  .hidden{display:none}
 </style>
-
+</head>
 <body>
 <div class="wrap">
-
   <header>
-    <div class="title">
-      <span class="badge">Event</span>
-      <div>
-        <h1>Go Collect — Clan Wars</h1>
-        <div class="muted">Лидерборд. Обновление раз в час</div>
-      </div>
+    <div>
+      <h1>Clan Wars — Leaderboard</h1>
+      <div class="muted">Обновляется автоматически каждый час из <code>leaderboard.csv</code></div>
     </div>
     <div class="controls">
-      <input id="q" type="search" placeholder="Поиск по userId / фильтр…" />
-      <select id="pagesize"><option>25</option><option selected>50</option><option>100</option></select>
+      <input id="q" type="search" placeholder="Поиск по кланам и игрокам…" />
+      <select id="pagesize" title="Кланов на страницу">
+        <option>10</option><option selected>20</option><option>50</option>
+      </select>
       <button id="theme">🌓 Тема</button>
       <button id="refresh" class="pill">Обновить</button>
     </div>
   </header>
 
-  <!-- счётчики сверху -->
-  <div class="cards">
-    <div class="card accent"><div class="k">Всего игроков</div><div class="v" id="m_total">—</div></div>
-    <div class="card"><div class="k">Средний Score</div><div class="v" id="m_avg">—</div></div>
-    <div class="card"><div class="k">Макс Score</div><div class="v" id="m_max">—</div></div>
-    <div class="card"><div class="k">Последнее обновление</div><div class="v" id="m_time">—</div></div>
-  </div>
-
-  <div class="card" style="padding:0; overflow:hidden">
-    <table id="tbl">
-      <thead><tr id="head"></tr></thead>
-      <tbody id="body"><tr><td class="center" colspan="10">Загрузка…</td></tr></tbody>
-    </table>
-  </div>
-
   <div class="panel">
     <span class="chip" id="meta">—</span>
     <div class="spacer"></div>
-    <div class="pager">
-      <button id="prev">←</button>
-      <span class="chip" id="pageinfo">1 / 1</span>
-      <button id="next">→</button>
-    </div>
+    <span class="muted">Подсказка: клик по строке клана раскрывает игроков</span>
   </div>
 
-  <div class="foot">Источник данных: <code>leaderboard.csv</code> в корне репозитория GitHub Pages.</div>
+  <!-- сюда рендерятся кланы -->
+  <div id="clans"></div>
+
+  <div class="panel">
+    <div class="spacer"></div>
+    <button id="prev">← Предыдущая</button>
+    <span class="chip" id="pageinfo">1 / 1</span>
+    <button id="next">Следующая →</button>
+  </div>
 </div>
 
 <script>
-/* ===== theme toggle ===== */
+/* ====== Тема ====== */
 const root = document.documentElement;
-const saved = localStorage.getItem('theme') || 'dark';
-if(saved==='light') root.classList.add('light');
+const savedTheme = localStorage.getItem('theme') || 'dark';
+if(savedTheme==='light') root.classList.add('light');
 document.getElementById('theme').onclick = ()=>{
   root.classList.toggle('light');
-  localStorage.setItem('theme', root.classList.contains('light')?'light':'dark');
+  localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
 };
 
-/* ===== таблица ===== */
-let rows=[], headers=[], filtered=[], sortKey=0, sortDir=1, page=1, pageSize=50;
-const headEl = document.getElementById('head');
-const bodyEl = document.getElementById('body');
+/* ====== Данные ====== */
+let clansMap = new Map();    // clan -> {rank,total,players:[{userId,player_rank,player_result}]}
+let orderedClans = [];       // упорядоченный массив [ [clan, data], ... ]
+let page = 1, pageSize = 20;
+const rootEl = document.getElementById('clans');
+const metaEl = document.getElementById('meta');
 const pageInfo = document.getElementById('pageinfo');
-const meta = document.getElementById('meta');
 
 async function loadCSV(){
-  const res = await fetch('leaderboard.csv?cache='+Date.now());
-  if(!res.ok){ bodyEl.innerHTML = `<tr><td class="center" colspan="10">Не удалось загрузить CSV</td></tr>`; return; }
+  const res = await fetch('leaderboard.csv?cache=' + Date.now());
+  if(!res.ok){ rootEl.innerHTML = '<div class="card" style="padding:16px">Не удалось загрузить CSV</div>'; return; }
   const txt = await res.text();
-  const lines = txt.trim().split(/\r?\n/).map(l => l.split(','));
-  headers = lines.shift();
-  rows = lines.map(r => r.map(c => c));
-  renderHead();
-  apply();
-  updateMetrics();
-}
-function renderHead(){
-  headEl.innerHTML = headers.map((h,i)=>`<th class="sortable" data-i="${i}">${h} ${i===sortKey?(sortDir>0?'▲':'▼'):''}</th>`).join('');
-  headEl.querySelectorAll('.sortable').forEach(th=>{
-    th.onclick = ()=>{
-      const i = +th.dataset.i;
-      if(sortKey===i) sortDir*=-1; else { sortKey=i; sortDir=1; }
-      page=1; apply();
-    };
-  });
-}
-function apply(){
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  filtered = q ? rows.filter(r => r.some(c => (c+'').toLowerCase().includes(q))) : [...rows];
+  const lines = txt.trim().split(/\r?\n/).map(r => r.split(','));
 
-  filtered.sort((a,b)=>{
-    const av=a[sortKey], bv=b[sortKey];
-    const na=+av, nb=+bv, bothNum = !isNaN(na)&&!isNaN(nb);
-    const res = bothNum ? (na-nb) : (''+av).localeCompare(''+bv,'ru',{numeric:true});
-    return res*sortDir;
-  });
+  const headers = lines.shift().map(h => h.replace(/^"|"$/g,''));
+  const idx = Object.fromEntries(headers.map((h,i)=>[h,i]));
+  // ожидаемые колонки:
+  // kind, clan, clan_rank, clan_result_total, userId, player_rank, player_result, order_in_group
 
-  pageSize = +document.getElementById('pagesize').value;
-  const total = filtered.length, maxPage = Math.max(1, Math.ceil(total/pageSize));
-  page = Math.min(page, maxPage);
-  const start=(page-1)*pageSize, end=start+pageSize, slice=filtered.slice(start,end);
+  const map = new Map();
+  for(const row of lines){
+    const kind = row[idx.kind];
+    const clan = row[idx.clan];
+    const clan_rank = +row[idx.clan_rank];
+    const clan_total = +row[idx.clan_result_total];
 
-  bodyEl.innerHTML = slice.map(r => `<tr>${r.map((c,i)=>`<td class="${i>0?'right':''}">${c}</td>`).join('')}</tr>`).join('')
-                      || `<tr><td class="center" colspan="${headers.length}">Нет данных</td></tr>`;
-  pageInfo.textContent = `${page} / ${maxPage}`;
-  meta.textContent = `Показано ${slice.length} из ${total}`;
-}
-function updateMetrics(){
-  const scoreIdx = headers.findIndex(h => h.toLowerCase() === 'score' || h.toLowerCase() === '"score"');
-  const ids = new Set(rows.map(r => r[0]));
-  document.getElementById('m_total').textContent = ids.size.toString();
-  if(scoreIdx>=0){
-    const nums = rows.map(r => +r[scoreIdx]).filter(n => !isNaN(n));
-    const avg = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length) : 0;
-    const max = nums.length ? Math.max(...nums) : 0;
-    document.getElementById('m_avg').textContent = Math.round(avg);
-    document.getElementById('m_max').textContent = max;
-  } else {
-    document.getElementById('m_avg').textContent = '—';
-    document.getElementById('m_max').textContent = '—';
+    if(!map.has(clan)) map.set(clan, { rank: clan_rank, total: clan_total, players: [] });
+
+    if(kind === 'player'){
+      map.get(clan).players.push({
+        userId: row[idx.userId],
+        player_rank: +row[idx.player_rank],
+        player_result: +row[idx.player_result]
+      });
+    }
   }
-  const now = new Date(); 
-  document.getElementById('m_time').textContent = now.toLocaleString();
+
+  // сортируем кланы по рангу
+  orderedClans = [...map.entries()].sort((a,b)=>a[1].rank - b[1].rank);
+  clansMap = map;
+  page = 1;
+  render();
 }
 
-/* события UI */
-document.getElementById('q').oninput = ()=>{ page=1; apply(); };
-document.getElementById('pagesize').onchange = ()=>{ page=1; apply(); };
-document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; apply(); } };
-document.getElementById('next').onclick = ()=>{ const max=Math.ceil((filtered.length||1)/pageSize)||1; if(page<max){ page++; apply(); } };
+function formatNumber(x){
+  const n = Number(x);
+  if (Number.isNaN(n)) return x;
+  return n.toLocaleString('en-US');
+}
+
+function filteredClans(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  if(!q) return orderedClans;
+
+  // фильтруем по названию клана или наличию игрока с совпадением
+  return orderedClans.filter(([clan, data])=>{
+    if (clan.toLowerCase().includes(q)) return true;
+    return data.players.some(p =>
+      (''+p.userId).toLowerCase().includes(q) ||
+      (''+p.player_result).toLowerCase().includes(q)
+    );
+  });
+}
+
+function render(){
+  const all = filteredClans();
+  pageSize = +document.getElementById('pagesize').value;
+  const maxPage = Math.max(1, Math.ceil(all.length / pageSize));
+  page = Math.min(page, maxPage);
+
+  const slice = all.slice((page-1)*pageSize, (page-1)*pageSize + pageSize);
+
+  rootEl.innerHTML = slice.map(([clan, data])=>{
+    const playersRows = (data.players || [])
+      .sort((a,b)=>a.player_rank - b.player_rank)
+      .map(p => `
+        <tr>
+          <td class="right" style="width:60px">#${p.player_rank}</td>
+          <td>${p.userId}</td>
+          <td class="right">${formatNumber(p.player_result)}</td>
+        </tr>
+      `).join('') || `<tr><td colspan="3" class="center muted">Нет игроков</td></tr>`;
+
+    return `
+      <details class="card" ${data.rank===1 ? 'open' : ''}>
+        <summary>
+          <div class="clan-title">
+            <span class="rank">#${data.rank}</span>
+            <div>
+              <div style="font-weight:700">${clan}</div>
+              <div class="badge">игроков: ${data.players.length}</div>
+            </div>
+          </div>
+          <div class="total">Итог клана: <strong>${formatNumber(data.total)}</strong></div>
+        </summary>
+        <div style="padding:10px 16px 14px">
+          <table>
+            <thead>
+              <tr>
+                <th class="right">Место</th>
+                <th>Игрок (userId)</th>
+                <th class="right">vSleep</th>
+              </tr>
+            </thead>
+            <tbody>${playersRows}</tbody>
+          </table>
+        </div>
+      </details>
+    `;
+  }).join('');
+
+  pageInfo.textContent = `${page} / ${Math.max(1, Math.ceil(all.length / pageSize))}`;
+  metaEl.textContent = `Кланов: ${all.length} • Показано: ${slice.length}`;
+}
+
+/* ====== UI события ====== */
+document.getElementById('q').addEventListener('input', ()=>{ page=1; render(); });
+document.getElementById('pagesize').addEventListener('change', ()=>{ page=1; render(); });
+document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; render(); } };
+document.getElementById('next').onclick = ()=>{ const all = filteredClans(); const max = Math.max(1, Math.ceil(all.length/pageSize)); if(page<max){ page++; render(); } };
 document.getElementById('refresh').onclick = loadCSV;
 
-/* автообновление csv на клиенте (можно оставить 60*1000) */
-setInterval(loadCSV, 5*60*1000);
+/* ====== Автообновление CSV (опционально) ====== */
+setInterval(loadCSV, 5*60*1000); // каждые 5 минут
 loadCSV();
 </script>
 </body>
