@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Sleepagotchi — Clan Wars Leaderboard</title>
 <style>
-  /* ===== Палитра (подправь при желании под текущий бренд) ===== */
+  /* ===== Theme (tweak to match your brand) ===== */
   :root{
-    --bg: #0a0f14;          /* фон страницы */
-    --fg: #eaf2ff;          /* основной текст */
-    --muted:#9fb1c6;        /* вторичный текст */
-    --card:#101826;         /* карточки/ячейки */
-    --border:#1d2a3a;       /* границы */
-    --primary:#00e6a8;      /* акцент */
-    --secondary:#6c5ce7;    /* акцент 2 */
+    --bg:#0a0f14;          /* page background */
+    --fg:#eaf2ff;          /* primary text */
+    --muted:#9fb1c6;       /* secondary text */
+    --card:#101826;        /* cards/cells */
+    --border:#1d2a3a;      /* borders */
+    --primary:#00e6a8;     /* accent */
+    --secondary:#6c5ce7;   /* accent 2 */
   }
   :root.light{
     --bg:#ffffff; --fg:#0a0f14; --muted:#5a6a7c; --card:#f5f8fc; --border:#e4ecf5;
@@ -44,7 +44,7 @@
   .card{background:rgba(16,24,38,.8);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:14px}
   details.card{margin:10px 0;overflow:hidden}
   details.card > summary{
-    list-style:none; /* убираем маркер */
+    list-style:none;
     display:flex;justify-content:space-between;align-items:center;gap:12px;
     padding:12px 16px; cursor:pointer; user-select:none;
   }
@@ -65,7 +65,6 @@
   .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
   .spacer{flex:1}
   .chip{border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--muted)}
-  .hidden{display:none}
 </style>
 </head>
 <body>
@@ -73,48 +72,47 @@
   <header>
     <div>
       <h1>Clan Wars — Leaderboard</h1>
-      <div class="muted">Обновляется автоматически каждый час из <code>leaderboard.csv</code></div>
+      <div class="muted">Auto-updates hourly from <code>leaderboard.csv</code></div>
     </div>
     <div class="controls">
-      <input id="q" type="search" placeholder="Поиск по кланам и игрокам…" />
-      <select id="pagesize" title="Кланов на страницу">
+      <input id="q" type="search" placeholder="Search clans & players…" />
+      <select id="pagesize" title="Clans per page">
         <option>10</option><option selected>20</option><option>50</option>
       </select>
-      <button id="theme">🌓 Тема</button>
-      <button id="refresh" class="pill">Обновить</button>
+      <button id="theme">🌓 Theme</button>
+      <button id="refresh" class="pill">Refresh</button>
     </div>
   </header>
 
   <div class="panel">
     <span class="chip" id="meta">—</span>
     <div class="spacer"></div>
-    <span class="muted">Подсказка: клик по строке клана раскрывает игроков</span>
+    <span class="muted">Tip: click a clan row to expand its players</span>
   </div>
 
-  <!-- сюда рендерятся кланы -->
+  <!-- clans render here -->
   <div id="clans"></div>
 
   <div class="panel">
     <div class="spacer"></div>
-    <button id="prev">← Предыдущая</button>
+    <button id="prev">← Previous</button>
     <span class="chip" id="pageinfo">1 / 1</span>
-    <button id="next">Следующая →</button>
+    <button id="next">Next →</button>
   </div>
 </div>
 
 <script>
-/* ====== Тема ====== */
+/* ===== Theme toggle ===== */
 const root = document.documentElement;
 const savedTheme = localStorage.getItem('theme') || 'dark';
-if(savedTheme==='light') root.classList.add('light');
-document.getElementById('theme').onclick = ()=>{
+if (savedTheme === 'light') root.classList.add('light');
+document.getElementById('theme').onclick = () => {
   root.classList.toggle('light');
   localStorage.setItem('theme', root.classList.contains('light') ? 'light' : 'dark');
 };
 
-/* ====== Данные ====== */
-let clansMap = new Map();    // clan -> {rank,total,players:[{userId,player_rank,player_result}]}
-let orderedClans = [];       // упорядоченный массив [ [clan, data], ... ]
+/* ===== Data handling ===== */
+let orderedClans = []; // [ [clanName, {rank,total,players:[{userId,player_rank,player_result}]}], ... ]
 let page = 1, pageSize = 20;
 const rootEl = document.getElementById('clans');
 const metaEl = document.getElementById('meta');
@@ -122,25 +120,29 @@ const pageInfo = document.getElementById('pageinfo');
 
 async function loadCSV(){
   const res = await fetch('leaderboard.csv?cache=' + Date.now());
-  if(!res.ok){ rootEl.innerHTML = '<div class="card" style="padding:16px">Не удалось загрузить CSV</div>'; return; }
+  if(!res.ok){
+    rootEl.innerHTML = '<div class="card" style="padding:16px">Failed to load CSV</div>';
+    return;
+  }
   const txt = await res.text();
-  const lines = txt.trim().split(/\r?\n/).map(r => r.split(','));
 
+  // very simple CSV parsing (suited for our generated CSV without embedded commas/quotes)
+  const lines = txt.trim().split(/\r?\n/).map(r => r.split(','));
   const headers = lines.shift().map(h => h.replace(/^"|"$/g,''));
   const idx = Object.fromEntries(headers.map((h,i)=>[h,i]));
-  // ожидаемые колонки:
+  // expected columns:
   // kind, clan, clan_rank, clan_result_total, userId, player_rank, player_result, order_in_group
 
   const map = new Map();
-  for(const row of lines){
+  for (const row of lines) {
     const kind = row[idx.kind];
     const clan = row[idx.clan];
     const clan_rank = +row[idx.clan_rank];
     const clan_total = +row[idx.clan_result_total];
 
-    if(!map.has(clan)) map.set(clan, { rank: clan_rank, total: clan_total, players: [] });
+    if (!map.has(clan)) map.set(clan, { rank: clan_rank, total: clan_total, players: [] });
 
-    if(kind === 'player'){
+    if (kind === 'player') {
       map.get(clan).players.push({
         userId: row[idx.userId],
         player_rank: +row[idx.player_rank],
@@ -149,9 +151,7 @@ async function loadCSV(){
     }
   }
 
-  // сортируем кланы по рангу
   orderedClans = [...map.entries()].sort((a,b)=>a[1].rank - b[1].rank);
-  clansMap = map;
   page = 1;
   render();
 }
@@ -166,12 +166,13 @@ function filteredClans(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   if(!q) return orderedClans;
 
-  // фильтруем по названию клана или наличию игрока с совпадением
+  // filter by clan name or matching player/userId/value
   return orderedClans.filter(([clan, data])=>{
     if (clan.toLowerCase().includes(q)) return true;
     return data.players.some(p =>
       (''+p.userId).toLowerCase().includes(q) ||
-      (''+p.player_result).toLowerCase().includes(q)
+      (''+p.player_result).toLowerCase().includes(q) ||
+      (''+p.player_rank).toLowerCase().includes(q)
     );
   });
 }
@@ -193,7 +194,7 @@ function render(){
           <td>${p.userId}</td>
           <td class="right">${formatNumber(p.player_result)}</td>
         </tr>
-      `).join('') || `<tr><td colspan="3" class="center muted">Нет игроков</td></tr>`;
+      `).join('') || `<tr><td colspan="3" class="center muted">No players</td></tr>`;
 
     return `
       <details class="card" ${data.rank===1 ? 'open' : ''}>
@@ -202,17 +203,17 @@ function render(){
             <span class="rank">#${data.rank}</span>
             <div>
               <div style="font-weight:700">${clan}</div>
-              <div class="badge">игроков: ${data.players.length}</div>
+              <div class="badge">players: ${data.players.length}</div>
             </div>
           </div>
-          <div class="total">Итог клана: <strong>${formatNumber(data.total)}</strong></div>
+          <div class="total">Clan total: <strong>${formatNumber(data.total)}</strong></div>
         </summary>
         <div style="padding:10px 16px 14px">
           <table>
             <thead>
               <tr>
-                <th class="right">Место</th>
-                <th>Игрок (userId)</th>
+                <th class="right">Rank</th>
+                <th>Player (userId)</th>
                 <th class="right">vSleep</th>
               </tr>
             </thead>
@@ -224,18 +225,18 @@ function render(){
   }).join('');
 
   pageInfo.textContent = `${page} / ${Math.max(1, Math.ceil(all.length / pageSize))}`;
-  metaEl.textContent = `Кланов: ${all.length} • Показано: ${slice.length}`;
+  metaEl.textContent = `Clans: ${all.length} • Showing: ${slice.length}`;
 }
 
-/* ====== UI события ====== */
+/* ===== UI events ===== */
 document.getElementById('q').addEventListener('input', ()=>{ page=1; render(); });
 document.getElementById('pagesize').addEventListener('change', ()=>{ page=1; render(); });
 document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; render(); } };
 document.getElementById('next').onclick = ()=>{ const all = filteredClans(); const max = Math.max(1, Math.ceil(all.length/pageSize)); if(page<max){ page++; render(); } };
 document.getElementById('refresh').onclick = loadCSV;
 
-/* ====== Автообновление CSV (опционально) ====== */
-setInterval(loadCSV, 5*60*1000); // каждые 5 минут
+/* ===== Auto refresh (optional) ===== */
+setInterval(loadCSV, 5*60*1000); // every 5 minutes
 loadCSV();
 </script>
 </body>
