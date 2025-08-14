@@ -2,75 +2,126 @@
 <html lang="ru">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Clan Wars — Leaderboard</title>
+<title>Sleepagotchi — Clan Wars Leaderboard</title>
+
 <style>
-  :root{--bg:#0b0f14;--fg:#e6eaf0;--muted:#a3adbb;--card:#121821;--border:#1f2a38}
-  :root.light{--bg:#ffffff;--fg:#0b0f14;--muted:#5a6573;--card:#f5f7fb;--border:#e6eaf0}
+  /* ==== ПАЛИТРА: подгони под gocollect.sleepagotchi.com ==== */
+  :root{
+    --bg: #0a0f14;          /* фон страницы */
+    --fg: #eaf2ff;          /* основной текст */
+    --muted:#9fb1c6;        /* вторичный текст */
+    --card:#0f1720;         /* карточки/ячейки */
+    --border:#1d2a3a;       /* границы */
+    --primary:#00e6a8;      /* основной акцент (неоновый мятный) */
+    --secondary:#6c5ce7;    /* второй акцент (индиго/фиолет) */
+    --grad1:#0b1220;        /* градиент 1 */
+    --grad2:#101a2b;        /* градиент 2 */
+  }
+  /* светлая тема при желании */
+  :root.light{
+    --bg:#ffffff; --fg:#0a0f14; --muted:#5a6a7c; --card:#f5f8fc; --border:#e4ecf5;
+    --grad1:#ffffff; --grad2:#f7fbff;
+  }
+
+  *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
-  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
-  header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
-  h1{font-size:22px;margin:0}
-  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  input[type="search"]{padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:10px;min-width:240px}
-  button,select{padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:10px;cursor:pointer}
-  .muted{color:var(--muted);font-size:12px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-  table{width:100%;border-collapse:collapse}
-  thead th{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--border);font-weight:600}
-  th,td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  body{
+    margin:0; background: radial-gradient(1200px 600px at 20% -10%, var(--grad2), transparent 70%) , linear-gradient(var(--grad1), var(--bg));
+    color:var(--fg); font:14px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  }
+  .wrap{max-width:1200px; margin:32px auto; padding:0 16px}
+  header{display:flex; gap:16px; align-items:center; justify-content:space-between; margin-bottom:16px}
+  .title{display:flex; gap:12px; align-items:center}
+  .badge{font-size:12px; padding:4px 8px; border:1px solid var(--border); border-radius:999px; color:var(--muted)}
+  h1{font-size:22px; margin:0}
+  .muted{color:var(--muted)}
+  .controls{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  input[type="search"], select, button{
+    padding:10px 12px; border:1px solid var(--border); background:var(--card); color:var(--fg);
+    border-radius:10px; outline:none
+  }
+  button{cursor:pointer}
+  .pill{background:linear-gradient(135deg, var(--primary), var(--secondary)); color:#001a12; font-weight:600; border:none}
+  .cards{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:12px; margin:16px 0}
+  .card{background:rgba(15,23,32,.7); backdrop-filter: blur(6px); border:1px solid var(--border); border-radius:16px; padding:14px}
+  .k{font-size:12px; color:var(--muted)}
+  .v{font-size:22px; font-weight:700}
+  .accent{background:linear-gradient(135deg, rgba(0,230,168,.15), rgba(108,92,231,.15)); border-color:rgba(0,230,168,.35)}
+
+  table{width:100%; border-collapse:collapse}
+  thead th{position:sticky; top:0; background:var(--card); border-bottom:1px solid var(--border)}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--border); white-space:nowrap}
   th.sortable{cursor:pointer}
-  tr:hover td{background:rgba(255,255,255,0.03)}
-  .pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:12px}
-  .chip{padding:6px 10px;border:1px solid var(--border);border-radius:8px}
+  tbody tr:hover td{background:rgba(255,255,255,.03)}
   .right{text-align:right}
   .center{text-align:center}
-  .hidden{display:none}
+
+  .panel{display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin:14px 0}
+  .spacer{flex:1}
+  .pager{display:flex; gap:8px; align-items:center}
+  .chip{border:1px solid var(--border); border-radius:8px; padding:6px 10px; color:var(--muted)}
+  .foot{margin-top:18px; color:var(--muted); font-size:12px}
 </style>
 
 <body>
 <div class="wrap">
+
   <header>
-    <div>
-      <h1>Clan Wars — Leaderboard</h1>
-      <div class="muted">Обновляется автоматически каждый час. Источник: <code>leaderboard.csv</code></div>
+    <div class="title">
+      <span class="badge">Event</span>
+      <div>
+        <h1>Go Collect — Clan Wars</h1>
+        <div class="muted">Лидерборд. Обновление раз в час</div>
+      </div>
     </div>
     <div class="controls">
       <input id="q" type="search" placeholder="Поиск по userId / фильтр…" />
-      <select id="pagesize">
-        <option>25</option><option selected>50</option><option>100</option>
-      </select>
+      <select id="pagesize"><option>25</option><option selected>50</option><option>100</option></select>
       <button id="theme">🌓 Тема</button>
+      <button id="refresh" class="pill">Обновить</button>
     </div>
   </header>
 
-  <div class="card">
+  <!-- счётчики сверху -->
+  <div class="cards">
+    <div class="card accent"><div class="k">Всего игроков</div><div class="v" id="m_total">—</div></div>
+    <div class="card"><div class="k">Средний Score</div><div class="v" id="m_avg">—</div></div>
+    <div class="card"><div class="k">Макс Score</div><div class="v" id="m_max">—</div></div>
+    <div class="card"><div class="k">Последнее обновление</div><div class="v" id="m_time">—</div></div>
+  </div>
+
+  <div class="card" style="padding:0; overflow:hidden">
     <table id="tbl">
       <thead><tr id="head"></tr></thead>
-      <tbody id="body"><tr><td class="center" colspan="6">Загрузка…</td></tr></tbody>
+      <tbody id="body"><tr><td class="center" colspan="10">Загрузка…</td></tr></tbody>
     </table>
   </div>
-  <div class="pager">
-    <span class="muted" id="meta"></span>
-    <div style="flex:1"></div>
-    <button id="prev">←</button>
-    <span class="chip" id="pageinfo">1 / 1</span>
-    <button id="next">→</button>
+
+  <div class="panel">
+    <span class="chip" id="meta">—</span>
+    <div class="spacer"></div>
+    <div class="pager">
+      <button id="prev">←</button>
+      <span class="chip" id="pageinfo">1 / 1</span>
+      <button id="next">→</button>
+    </div>
   </div>
+
+  <div class="foot">Источник данных: <code>leaderboard.csv</code> в корне репозитория GitHub Pages.</div>
 </div>
 
 <script>
-/* ---- theme toggle ---- */
+/* ===== theme toggle ===== */
 const root = document.documentElement;
-const savedTheme = localStorage.getItem('theme') || 'dark';
-if(savedTheme==='light') root.classList.add('light');
+const saved = localStorage.getItem('theme') || 'dark';
+if(saved==='light') root.classList.add('light');
 document.getElementById('theme').onclick = ()=>{
   root.classList.toggle('light');
   localStorage.setItem('theme', root.classList.contains('light')?'light':'dark');
 };
 
-/* ---- data ---- */
-let rows=[], headers=[], sortKey=0, sortDir=1, page=1, pageSize=50, filtered=[];
+/* ===== таблица ===== */
+let rows=[], headers=[], filtered=[], sortKey=0, sortDir=1, page=1, pageSize=50;
 const headEl = document.getElementById('head');
 const bodyEl = document.getElementById('body');
 const pageInfo = document.getElementById('pageinfo');
@@ -78,15 +129,15 @@ const meta = document.getElementById('meta');
 
 async function loadCSV(){
   const res = await fetch('leaderboard.csv?cache='+Date.now());
-  if(!res.ok){ bodyEl.innerHTML = `<tr><td class="center" colspan="6">Не удалось загрузить CSV</td></tr>`; return; }
+  if(!res.ok){ bodyEl.innerHTML = `<tr><td class="center" colspan="10">Не удалось загрузить CSV</td></tr>`; return; }
   const txt = await res.text();
-  const lines = txt.trim().split(/\r?\n/).map(l=>l.split(','));
+  const lines = txt.trim().split(/\r?\n/).map(l => l.split(','));
   headers = lines.shift();
-  rows = lines.map(r => r.map(c=>c));
+  rows = lines.map(r => r.map(c => c));
   renderHead();
   apply();
+  updateMetrics();
 }
-
 function renderHead(){
   headEl.innerHTML = headers.map((h,i)=>`<th class="sortable" data-i="${i}">${h} ${i===sortKey?(sortDir>0?'▲':'▼'):''}</th>`).join('');
   headEl.querySelectorAll('.sortable').forEach(th=>{
@@ -97,44 +148,54 @@ function renderHead(){
     };
   });
 }
-
 function apply(){
-  // filter
   const q = document.getElementById('q').value.trim().toLowerCase();
   filtered = q ? rows.filter(r => r.some(c => (c+'').toLowerCase().includes(q))) : [...rows];
 
-  // sort (числа сортируем как числа)
   filtered.sort((a,b)=>{
-    const av = a[sortKey], bv = b[sortKey];
-    const na = +av, nb = +bv;
-    const isNum = !isNaN(na) && !isNaN(nb);
-    const res = isNum ? (na-nb) : (''+av).localeCompare(''+bv, 'ru', {numeric:true});
-    return res * sortDir;
+    const av=a[sortKey], bv=b[sortKey];
+    const na=+av, nb=+bv, bothNum = !isNaN(na)&&!isNaN(nb);
+    const res = bothNum ? (na-nb) : (''+av).localeCompare(''+bv,'ru',{numeric:true});
+    return res*sortDir;
   });
 
-  // pagination
   pageSize = +document.getElementById('pagesize').value;
-  const total = filtered.length;
-  const maxPage = Math.max(1, Math.ceil(total / pageSize));
+  const total = filtered.length, maxPage = Math.max(1, Math.ceil(total/pageSize));
   page = Math.min(page, maxPage);
-  const start = (page-1)*pageSize, end = start+pageSize;
-  const slice = filtered.slice(start, end);
+  const start=(page-1)*pageSize, end=start+pageSize, slice=filtered.slice(start,end);
 
-  // render
-  bodyEl.innerHTML = slice.map(r => `<tr>${r.map((c,i)=>`<td class="${i>0?'right':''}">${c}</td>`).join('')}</tr>`).join('') || 
-                     `<tr><td class="center" colspan="${headers.length}">Нет данных</td></tr>`;
+  bodyEl.innerHTML = slice.map(r => `<tr>${r.map((c,i)=>`<td class="${i>0?'right':''}">${c}</td>`).join('')}</tr>`).join('')
+                      || `<tr><td class="center" colspan="${headers.length}">Нет данных</td></tr>`;
   pageInfo.textContent = `${page} / ${maxPage}`;
   meta.textContent = `Показано ${slice.length} из ${total}`;
 }
+function updateMetrics(){
+  const scoreIdx = headers.findIndex(h => h.toLowerCase() === 'score' || h.toLowerCase() === '"score"');
+  const ids = new Set(rows.map(r => r[0]));
+  document.getElementById('m_total').textContent = ids.size.toString();
+  if(scoreIdx>=0){
+    const nums = rows.map(r => +r[scoreIdx]).filter(n => !isNaN(n));
+    const avg = nums.length ? (nums.reduce((a,b)=>a+b,0)/nums.length) : 0;
+    const max = nums.length ? Math.max(...nums) : 0;
+    document.getElementById('m_avg').textContent = Math.round(avg);
+    document.getElementById('m_max').textContent = max;
+  } else {
+    document.getElementById('m_avg').textContent = '—';
+    document.getElementById('m_max').textContent = '—';
+  }
+  const now = new Date(); 
+  document.getElementById('m_time').textContent = now.toLocaleString();
+}
 
+/* события UI */
 document.getElementById('q').oninput = ()=>{ page=1; apply(); };
 document.getElementById('pagesize').onchange = ()=>{ page=1; apply(); };
 document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; apply(); } };
-document.getElementById('next').onclick = ()=>{ const max = Math.ceil(filtered.length/pageSize)||1; if(page<max){ page++; apply(); } };
+document.getElementById('next').onclick = ()=>{ const max=Math.ceil((filtered.length||1)/pageSize)||1; if(page<max){ page++; apply(); } };
+document.getElementById('refresh').onclick = loadCSV;
 
-// автообновление CSV раз в минуту на клиенте (опционально)
-setInterval(loadCSV, 60*1000);
-
+/* автообновление csv на клиенте (можно оставить 60*1000) */
+setInterval(loadCSV, 5*60*1000);
 loadCSV();
 </script>
 </body>
