@@ -1,30 +1,141 @@
 <!doctype html>
 <html lang="ru">
 <meta charset="utf-8" />
-<title>Leaderboard</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Clan Wars — Leaderboard</title>
 <style>
-  body{font:14px/1.5 system-ui, sans-serif;margin:24px;max-width:1100px}
-  table{border-collapse:collapse;width:100%}
-  th,td{border:1px solid #ddd;padding:8px;text-align:left;white-space:nowrap}
-  thead th{position:sticky;top:0;background:#fafafa}
-  .muted{color:#666;font-size:12px;margin:8px 0 20px}
+  :root{--bg:#0b0f14;--fg:#e6eaf0;--muted:#a3adbb;--card:#121821;--border:#1f2a38}
+  :root.light{--bg:#ffffff;--fg:#0b0f14;--muted:#5a6573;--card:#f5f7fb;--border:#e6eaf0}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif}
+  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+  h1{font-size:22px;margin:0}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  input[type="search"]{padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:10px;min-width:240px}
+  button,select{padding:10px 12px;border:1px solid var(--border);background:var(--card);color:var(--fg);border-radius:10px;cursor:pointer}
+  .muted{color:var(--muted);font-size:12px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  thead th{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--border);font-weight:600}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--border);white-space:nowrap}
+  th.sortable{cursor:pointer}
+  tr:hover td{background:rgba(255,255,255,0.03)}
+  .pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:12px}
+  .chip{padding:6px 10px;border:1px solid var(--border);border-radius:8px}
+  .right{text-align:right}
+  .center{text-align:center}
+  .hidden{display:none}
 </style>
-<h1>Leaderboard</h1>
-<p class="muted">Обновляется автоматически каждый час.</p>
-<table id="tbl"><thead></thead><tbody></tbody></table>
+
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Clan Wars — Leaderboard</h1>
+      <div class="muted">Обновляется автоматически каждый час. Источник: <code>leaderboard.csv</code></div>
+    </div>
+    <div class="controls">
+      <input id="q" type="search" placeholder="Поиск по userId / фильтр…" />
+      <select id="pagesize">
+        <option>25</option><option selected>50</option><option>100</option>
+      </select>
+      <button id="theme">🌓 Тема</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <table id="tbl">
+      <thead><tr id="head"></tr></thead>
+      <tbody id="body"><tr><td class="center" colspan="6">Загрузка…</td></tr></tbody>
+    </table>
+  </div>
+  <div class="pager">
+    <span class="muted" id="meta"></span>
+    <div style="flex:1"></div>
+    <button id="prev">←</button>
+    <span class="chip" id="pageinfo">1 / 1</span>
+    <button id="next">→</button>
+  </div>
+</div>
+
 <script>
-async function load() {
-  const res = await fetch('leaderboard.csv?cache=' + Date.now());
-  if (!res.ok) { document.body.insertAdjacentHTML('beforeend', '<p>Не удалось загрузить CSV.</p>'); return; }
-  const text = await res.text();
-  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
-  const [headers, ...data] = rows;
-  const thead = document.querySelector('#tbl thead');
-  const tbody = document.querySelector('#tbl tbody');
-  thead.innerHTML = '<tr>' + headers.map(h=>`<th>${h}</th>`).join('') + '</tr>';
-  tbody.innerHTML = data.map(cells => '<tr>' + cells.map(c=>`<td>${c}</td>`).join('') + '</tr>').join('');
+/* ---- theme toggle ---- */
+const root = document.documentElement;
+const savedTheme = localStorage.getItem('theme') || 'dark';
+if(savedTheme==='light') root.classList.add('light');
+document.getElementById('theme').onclick = ()=>{
+  root.classList.toggle('light');
+  localStorage.setItem('theme', root.classList.contains('light')?'light':'dark');
+};
+
+/* ---- data ---- */
+let rows=[], headers=[], sortKey=0, sortDir=1, page=1, pageSize=50, filtered=[];
+const headEl = document.getElementById('head');
+const bodyEl = document.getElementById('body');
+const pageInfo = document.getElementById('pageinfo');
+const meta = document.getElementById('meta');
+
+async function loadCSV(){
+  const res = await fetch('leaderboard.csv?cache='+Date.now());
+  if(!res.ok){ bodyEl.innerHTML = `<tr><td class="center" colspan="6">Не удалось загрузить CSV</td></tr>`; return; }
+  const txt = await res.text();
+  const lines = txt.trim().split(/\r?\n/).map(l=>l.split(','));
+  headers = lines.shift();
+  rows = lines.map(r => r.map(c=>c));
+  renderHead();
+  apply();
 }
-load();
+
+function renderHead(){
+  headEl.innerHTML = headers.map((h,i)=>`<th class="sortable" data-i="${i}">${h} ${i===sortKey?(sortDir>0?'▲':'▼'):''}</th>`).join('');
+  headEl.querySelectorAll('.sortable').forEach(th=>{
+    th.onclick = ()=>{
+      const i = +th.dataset.i;
+      if(sortKey===i) sortDir*=-1; else { sortKey=i; sortDir=1; }
+      page=1; apply();
+    };
+  });
+}
+
+function apply(){
+  // filter
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  filtered = q ? rows.filter(r => r.some(c => (c+'').toLowerCase().includes(q))) : [...rows];
+
+  // sort (числа сортируем как числа)
+  filtered.sort((a,b)=>{
+    const av = a[sortKey], bv = b[sortKey];
+    const na = +av, nb = +bv;
+    const isNum = !isNaN(na) && !isNaN(nb);
+    const res = isNum ? (na-nb) : (''+av).localeCompare(''+bv, 'ru', {numeric:true});
+    return res * sortDir;
+  });
+
+  // pagination
+  pageSize = +document.getElementById('pagesize').value;
+  const total = filtered.length;
+  const maxPage = Math.max(1, Math.ceil(total / pageSize));
+  page = Math.min(page, maxPage);
+  const start = (page-1)*pageSize, end = start+pageSize;
+  const slice = filtered.slice(start, end);
+
+  // render
+  bodyEl.innerHTML = slice.map(r => `<tr>${r.map((c,i)=>`<td class="${i>0?'right':''}">${c}</td>`).join('')}</tr>`).join('') || 
+                     `<tr><td class="center" colspan="${headers.length}">Нет данных</td></tr>`;
+  pageInfo.textContent = `${page} / ${maxPage}`;
+  meta.textContent = `Показано ${slice.length} из ${total}`;
+}
+
+document.getElementById('q').oninput = ()=>{ page=1; apply(); };
+document.getElementById('pagesize').onchange = ()=>{ page=1; apply(); };
+document.getElementById('prev').onclick = ()=>{ if(page>1){ page--; apply(); } };
+document.getElementById('next').onclick = ()=>{ const max = Math.ceil(filtered.length/pageSize)||1; if(page<max){ page++; apply(); } };
+
+// автообновление CSV раз в минуту на клиенте (опционально)
+setInterval(loadCSV, 60*1000);
+
+loadCSV();
 </script>
+</body>
 </html>
