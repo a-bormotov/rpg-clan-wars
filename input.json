@@ -155,16 +155,16 @@
 {"userId": 73510, "subtract": 5520, "clan": "AGENTS OF SLEEP"},
 {"userId": 62848, "subtract": 5497, "clan": "AGENTS OF SLEEP"},
 {"userId": 54197, "subtract": 2516, "clan": "AGENTS OF SLEEP"},
-{"userId": 184845, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 181977, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 181957, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 181936, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 181929, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 181919, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 172350, "subtract": 0, "clan": "AGRARAMAN"},
-{"userId": 170425, "subtract": 10952, "clan": "AGRARAMAN"},
-{"userId": 168121, "subtract": 17031, "clan": "AGRARAMAN"},
-{"userId": 165529, "subtract": 23256, "clan": "AGRARAMAN"},
+
+
+
+
+
+
+
+
+
+
 {"userId": 66064, "subtract": 6658, "clan": "AIRDROP"},
 {"userId": 63893, "subtract": 5415, "clan": "AIRDROP"},
 {"userId": 63716, "subtract": 8105, "clan": "AIRDROP"},
@@ -259,16 +259,16 @@
 {"userId": 35838, "subtract": 4056, "clan": "AMAZYSLEEP"},
 {"userId": 129363, "subtract": 4948, "clan": "AMAZYSLEEP"},
 {"userId": 44421, "subtract": 13307, "clan": "ANDEEZY"},
-{"userId": 176062, "subtract": 924, "clan": "ANGGURMERAH"},
-{"userId": 174363, "subtract": 1144, "clan": "ANGGURMERAH"},
-{"userId": 174244, "subtract": 5764, "clan": "ANGGURMERAH"},
-{"userId": 174125, "subtract": 544, "clan": "ANGGURMERAH"},
-{"userId": 174019, "subtract": 724, "clan": "ANGGURMERAH"},
-{"userId": 173743, "subtract": 544, "clan": "ANGGURMERAH"},
-{"userId": 173666, "subtract": 1384, "clan": "ANGGURMERAH"},
-{"userId": 173565, "subtract": 1144, "clan": "ANGGURMERAH"},
-{"userId": 173203, "subtract": 5664, "clan": "ANGGURMERAH"},
-{"userId": 168462, "subtract": 17375, "clan": "ANGGURMERAH"},
+
+
+
+
+
+
+
+
+
+
 {"userId": 37999, "subtract": 9797, "clan": "ANGRYDINOWAWA"},
 {"userId": 121802, "subtract": 550, "clan": "ANTENA 42"},
 {"userId": 113049, "subtract": 4652, "clan": "ANTENA 42"},
@@ -1795,7 +1795,7 @@
 {"userId": 148667, "subtract": 15903, "clan": "GOGO"},
 {"userId": 140142, "subtract": 15406, "clan": "GOGO"},
 {"userId": 179672, "subtract": 0, "clan": "GOGO"},
-{"userId": 177490, "subtract": 900, "clan": "GOGO"},
+
 {"userId": 156346, "subtract": 15444, "clan": "GOGO"},
 {"userId": 103419, "subtract": 7297, "clan": "GOIANOS"},
 {"userId": 98378, "subtract": 4853, "clan": "GOIANOS"},
@@ -2376,8 +2376,8 @@
 {"userId": 36658, "subtract": 10485, "clan": "JUST4FUN 2"},
 {"userId": 35560, "subtract": 12920, "clan": "JUST4FUN 2"},
 {"userId": 34690, "subtract": 11720, "clan": "JUST4FUN 2"},
+{"userId": 34425, "subtract": 10144, "clan": "JUST4FUN 2"},
 {"userId": 34462, "subtract": 11699, "clan": "JUST4FUN 3"},
-{"userId": 34425, "subtract": 10144, "clan": "JUST4FUN 3"},
 {"userId": 34346, "subtract": 11453, "clan": "JUST4FUN 3"},
 {"userId": 183723, "subtract": 0, "clan": "KAANIBBOYS"},
 {"userId": 183417, "subtract": 0, "clan": "KAANIBBOYS"},
@@ -3491,9 +3491,9 @@
 {"userId": 185658, "subtract": 0, "clan": "PAYAMAN PH"},
 {"userId": 76597, "subtract": 6469, "clan": "PDFCLAN"},
 {"userId": 64947, "subtract": 6843, "clan": "PDFCLAN"},
-{"userId": 64420, "subtract": 11055, "clan": "PDFCLAN"},
+
 {"userId": 64175, "subtract": 807, "clan": "PDFCLAN"},
-{"userId": 63807, "subtract": 6561, "clan": "PDFCLAN"},
+
 {"userId": 43056, "subtract": 7145, "clan": "PDFCLAN"},
 {"userId": 43054, "subtract": 7110, "clan": "PDFCLAN"},
 {"userId": 42443, "subtract": 6957, "clan": "PDFCLAN"},
@@ -5877,7 +5877,7 @@
 {"userId": 58028, "subtract": 11099, "clan": "WETPAKSCLAN 1"},
 {"userId": 49227, "subtract": 8031, "clan": "WETPAKSCLAN 1"},
 {"userId": 46989, "subtract": 13172, "clan": "WETPAKSCLAN 1"},
-{"userId": 43980, "subtract": 14874, "clan": "WETPAKSCLAN 1"},
+
 {"userId": 46266, "subtract": 10038, "clan": "WETPAKSCLAN 2"},
 {"userId": 59836, "subtract": 6553, "clan": "WETPAKSCLAN 3"},
 {"userId": 78734, "subtract": 8595, "clan": "WINNERS"},
@@ -5956,8 +5956,8 @@
 {"userId": 129072, "subtract": 5412, "clan": "ZELCHAN"},
 {"userId": 99266, "subtract": 8546, "clan": "ZELCHAN"},
 {"userId": 37587, "subtract": 12751, "clan": "ZELCHAN"},
-{"userId": 79559, "subtract": 8671, "clan": "ZEN"},
-{"userId": 35401, "subtract": 12128, "clan": "ZEN"},
+{"userId": 79559, "subtract": 8671, "clan": "ZEN 1"},
+{"userId": 35401, "subtract": 12128, "clan": "ZEN 1"},
 {"userId": 36428, "subtract": 611, "clan": "ZEN 1"},
 {"userId": 35000, "subtract": 13309, "clan": "ZEN 1"},
 {"userId": 95117, "subtract": 6202, "clan": "ZEN 1"},
