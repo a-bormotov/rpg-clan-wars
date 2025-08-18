@@ -8,12 +8,22 @@ WITH input AS (
 
 -- сумма averageSleepScore за нужный период по каждому игроку
 sleep_penalty AS (
+  WITH per_day AS (
+    SELECT DISTINCT ON (ss."userId", ss."sleepDate"::date)
+      ss."userId",
+      ss."sleepDate"::date AS d,
+      COALESCE(ss."averageSleepScore", 0) AS score_per_day
+    FROM sleep_summary ss
+    WHERE ss."sleepDate"::date BETWEEN DATE '2025-08-15' AND DATE '2025-08-18'
+    ORDER BY ss."userId", ss."sleepDate"::date
+    -- порядок после ORDER BY задаёт, какую запись возьмём:
+    -- первую встреченную, можно поменять (например, добавить createdAt DESC)
+  )
   SELECT
-    ss."userId",
-    SUM(COALESCE(ss."averageSleepScore", 0)) AS sleep_score_sum
-  FROM sleep_summary ss
-  WHERE ss."sleepDate"::date BETWEEN DATE '2025-08-15' AND DATE '2025-08-18'
-  GROUP BY ss."userId"
+    "userId",
+    SUM(score_per_day) AS sleep_score_sum
+  FROM per_day
+  GROUP BY "userId"
 ),
 
 -- считаем вклад игрока: vSleep из users.rpg минус subtract из JSON и минус сумма averageSleepScore
