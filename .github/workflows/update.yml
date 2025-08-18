@@ -1,8 +1,8 @@
 name: Update leaderboard hourly
 
 on:
-  schedule:
-    - cron: '0 * * * *'   # каждый час (UTC)
+  #schedule:
+   # - cron: '0 * * * *'   # каждый час (UTC)
   workflow_dispatch:
 
 permissions:
